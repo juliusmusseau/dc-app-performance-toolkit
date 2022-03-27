@@ -14,7 +14,7 @@ settings:
 
     application_hostname: pizza 
     concurrency: 20
-    test_duration: 50
+    test_duration: 50m
     ramp-up: 10m
     total_actions_per_hour: 32700
  
