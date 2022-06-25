@@ -70,3 +70,6 @@ def test_1_selenium_custom_action(bitbucket_webdriver, bitbucket_datasets, bitbu
 
 def test_2_selenium_logout(bitbucket_webdriver, bitbucket_datasets, bitbucket_screen_shots):
     modules.logout(bitbucket_webdriver, bitbucket_datasets)
+
+
+
