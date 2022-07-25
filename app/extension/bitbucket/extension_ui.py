@@ -29,8 +29,8 @@ def app_specific_action(webdriver, datasets):
     def measure():
         @print_timing("selenium_app_custom_action:view_commit_graph")
         def sub_measure():
-            cherryUrl = f"{BITBUCKET_SETTINGS.server_url}/plugins/servlet/bb_ag/projects/{project_key}/repos/{repo_slug}/commits"
+            cherryUrl = f"{BITBUCKET_SETTINGS.server_url}/plugins/servlet/mb_info/projects/{project_key}/repos/{repo_slug}/commits"
             page.go_to_url(cherryUrl)
-            page.wait_until_clickable((By.ID, 'bb-apply'))
+            page.wait_until_clickable((By.ID, 'mbChangeBranch'))
         sub_measure()
     measure()
