@@ -73,7 +73,7 @@ def app_specific_action(webdriver, datasets):
 
 
             url = webdriver.current_url
-            url = url.replace("http://a13c0501f99b8495e8199a729f650b1a-618884428.us-east-2.elb.amazonaws.com/", "")
+            url = url.replace("http://a13c0501f99b8495e8199a729f650b1a-618884428.us-east-2.elb.amazonaws.com/bitbucket/", "")
             url = url.replace("/overview", "")
             print("CLEANED-URL: " + url)
 
@@ -116,7 +116,7 @@ def app_specific_action(webdriver, datasets):
                 javascriptRequest2 = ('var xhr = new XMLHttpRequest();'
                 'xhr.open("DELETE", "' + deleteUrl + '", false);'
                 'xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");'
-                'xhr.send(JSON.stringify({"version":0}));'
+                'xhr.send(JSON.stringify({"version":1}));'
                 # 'while(xhr.readyState !== 4){ await new Promise(r => setTimeout(r, 11)); }'
                 'return xhr.responseText;')
                 result = webdriver.execute_script(javascriptRequest2)
@@ -127,7 +127,7 @@ def app_specific_action(webdriver, datasets):
                     javascriptRequest2 = ('var xhr = new XMLHttpRequest();'
                     'xhr.open("DELETE", "' + deleteUrl + '", false);'
                     'xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");'
-                    'xhr.send(JSON.stringify({"version":1}));'
+                    'xhr.send(JSON.stringify({"version":2}));'
                     # 'while(xhr.readyState !== 4){ await new Promise(r => setTimeout(r, 11)); }'
                     'return xhr.responseText;')
                     result = webdriver.execute_script(javascriptRequest2)
