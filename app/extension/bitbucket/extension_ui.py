@@ -22,7 +22,7 @@ def app_specific_action(webdriver, datasets):
     def measure():
         @print_timing("selenium_app_custom_action:view_repo_page")
         def sub_measure():
-            cherryUrl = f"{BITBUCKET_SETTINGS.server_url}/plugins/servlet/bb_rb/projects/{project_key}/repos/{repo_slug}/commits/" + branch_slug
+            cherryUrl = f"{BITBUCKET_SETTINGS.server_url}/plugins/servlet/bb_rb/projects/{project_key}/repos/{repo_slug}/commits/" + branch_slug + "~3"
             page.go_to_url(cherryUrl)
             raw_json = webdriver.find_element(By.TAG_NAME, 'pre').text
             json_data = json.loads(raw_json)
@@ -35,19 +35,16 @@ def app_specific_action(webdriver, datasets):
             'xhr.open("POST", "' + cherryUrl + '", false);'
             'xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");'
             'xhr.send(JSON.stringify({"mode": "bbRevert", "msg": "revert", "author": "Fake Generator <fake.user@atlassian.com>", "targetBranch": "' + branch_slug + '", "newBranch": "", "pushAsNew": "false", "parentNumber": 1, "strategyOption": "default"}));'
-            # 'while(xhr.readyState !== 4){ await new Promise(r => setTimeout(r, 11)); }'
             'return xhr.responseText;')
 
-            javascriptRequest2 = ('var xhr = new XMLHttpRequest();'
-            'xhr.open("POST", "' + cherryUrl + '", false);'
-            'xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");'
-            'xhr.send(JSON.stringify({"mode": "bbRevert", "msg": "revert-revert", "author": "Fake Generator <fake.user@atlassian.com>", "targetBranch": "' + branch_slug + '", "newBranch": "", "pushAsNew": "false", "parentNumber": 1, "strategyOption": "default"}));'
-            # 'while(xhr.readyState !== 4){ await new Promise(r => setTimeout(r, 11)); }'
-            'return xhr.responseText;')
+            #javascriptRequest2 = ('var xhr = new XMLHttpRequest();'
+            #'xhr.open("POST", "' + cherryUrl + '", false);'
+            #'xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");'
+            #'xhr.send(JSON.stringify({"mode": "bbRevert", "msg": "revert-revert", "author": "Fake Generator <fake.user@atlassian.com>", "targetBranch": "' + branch_slug + '", "newBranch": "", "pushAsNew": "false", "parentNumber": 1, "strategyOption": "default"}));'
+            #'return xhr.responseText;')
 
             # first bbRevert
             result = webdriver.execute_script(javascriptRequest1)
-            # print(result)
             json_data = json.loads(result)
             #print("revert1 DONE")
 
@@ -55,14 +52,11 @@ def app_specific_action(webdriver, datasets):
                 raise Exception("Bit-Booster Revert Failed")
 
             # and revert the revert !
-            result = webdriver.execute_script(javascriptRequest2)
-            # print(result)
-            json_data = json.loads(result)
-            #print("revert2 DONE")
-
-            if json_data['rbSuccess'] is None or not bool(json_data['rbSuccess']):
-                raise Exception("Bit-Booster Revert-Revert Failed")
-
+            # result = webdriver.execute_script(javascriptRequest2)
+            # json_data = json.loads(result)
+            # print("revert2 DONE")
+            #if json_data['rbSuccess'] is None or not bool(json_data['rbSuccess']):
+            #    raise Exception("Bit-Booster Revert-Revert Failed")
 
             prUrl = f"{BITBUCKET_SETTINGS.server_url}/projects/{project_key}/repos/{repo_slug}/pull-requests?create&sourceBranch=" + branch_slug + "&targetBranch=master"
             page.go_to_url(prUrl)
@@ -75,63 +69,51 @@ def app_specific_action(webdriver, datasets):
             url = webdriver.current_url
             url = url.replace("http://a13c0501f99b8495e8199a729f650b1a-618884428.us-east-2.elb.amazonaws.com/bitbucket/", "")
             url = url.replace("/overview", "")
-            print("CLEANED-URL: " + url)
 
             squashUrl = f"{BITBUCKET_SETTINGS.server_url}/plugins/servlet/bb_rb/" + url
             page.go_to_url(squashUrl)
             raw_json = webdriver.find_element(By.TAG_NAME, 'pre').text
             json_data = json.loads(raw_json)
-            # print("CAN-SQUASH? " + squashUrl)
-            #print(json_data)
             if json_data['userHasWrite'] is None or json_data['squashMsg'] is None or not bool(json_data['userHasWrite']):
                 raise Exception("Bit-Booster Can-Squash Failed")
 
             javascriptRequest1 = ('var xhr = new XMLHttpRequest();'
             'xhr.open("POST", "' + squashUrl + '", false);'
             'xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");'
-            'xhr.send(JSON.stringify({"mode": "bbSquash", "msg": "squash", "author": "Fake Generator <fake.user@atlassian.com>", "targetBranch": "", "newBranch": "", "pushAsNew": "", "parentNumber": "", "strategyOption": ""}));'
-            # 'while(xhr.readyState !== 4){ await new Promise(r => setTimeout(r, 11)); }'
+            'xhr.send(JSON.stringify({"mode": "bbAmend", "msg": "amend", "author": "Fake Generator <fake.user@atlassian.com>", "targetBranch": "", "newBranch": "", "pushAsNew": "", "parentNumber": "", "strategyOption": ""}));'
             'return xhr.responseText;')
 
             result = webdriver.execute_script(javascriptRequest1)
-            # print(result)
             json_data = json.loads(result)
-            #print("squash DONE")
 
             if json_data['rbSuccess'] is None or not bool(json_data['rbSuccess']):
-                raise Exception("Bit-Booster Squash Failed")
+                raise Exception("Bit-Booster Amend Failed")
 
             deleteUrl = f"{BITBUCKET_SETTINGS.server_url}/rest/api/1.0/" + url
             javascriptRequest2 = ('var xhr = new XMLHttpRequest();'
             'xhr.open("DELETE", "' + deleteUrl + '", false);'
             'xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");'
             'xhr.send(JSON.stringify({"version":1}));'
-            # 'while(xhr.readyState !== 4){ await new Promise(r => setTimeout(r, 11)); }'
             'return xhr.responseText;')
             result = webdriver.execute_script(javascriptRequest2)
-            # print("delete PR attempt 1 DONE - [" + result + "]")
 
             if (result != ""):
                 deleteUrl = f"{BITBUCKET_SETTINGS.server_url}/rest/api/1.0/" + url
                 javascriptRequest2 = ('var xhr = new XMLHttpRequest();'
                 'xhr.open("DELETE", "' + deleteUrl + '", false);'
                 'xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");'
-                'xhr.send(JSON.stringify({"version":1}));'
-                # 'while(xhr.readyState !== 4){ await new Promise(r => setTimeout(r, 11)); }'
+                'xhr.send(JSON.stringify({"version":2}));'
                 'return xhr.responseText;')
                 result = webdriver.execute_script(javascriptRequest2)
-                # print("delete PR attempt 2 DONE - [" + result + "]")
 
                 if (result != ""):
                     deleteUrl = f"{BITBUCKET_SETTINGS.server_url}/rest/api/1.0/" + url
                     javascriptRequest2 = ('var xhr = new XMLHttpRequest();'
                     'xhr.open("DELETE", "' + deleteUrl + '", false);'
                     'xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");'
-                    'xhr.send(JSON.stringify({"version":2}));'
-                    # 'while(xhr.readyState !== 4){ await new Promise(r => setTimeout(r, 11)); }'
+                    'xhr.send(JSON.stringify({"version":3}));'
                     'return xhr.responseText;')
                     result = webdriver.execute_script(javascriptRequest2)
-                    # print("delete PR attempt 3 DONE - [" + result + "]")
 
 
         sub_measure()
