@@ -13,6 +13,8 @@ def app_specific_action(webdriver, datasets):
     page = BasePage(webdriver)
 
     randomInt = 10000 + random.randint(1, 999)
+    branchInt = 10 + random.randint(1, 88)
+    branch_slug = "perf-branch-" + str(branchInt)
     project_key = "PRJ-" + str(randomInt)
     repo_slug = "prj-" + str(randomInt) + "-repo-1"
 
@@ -20,7 +22,7 @@ def app_specific_action(webdriver, datasets):
     def measure():
         @print_timing("selenium_app_custom_action:view_repo_page")
         def sub_measure():
-            cherryUrl = f"{BITBUCKET_SETTINGS.server_url}/plugins/servlet/bb_rb/projects/{project_key}/repos/{repo_slug}/commits/perf-branch-99"
+            cherryUrl = f"{BITBUCKET_SETTINGS.server_url}/plugins/servlet/bb_rb/projects/{project_key}/repos/{repo_slug}/commits/" + branch_slug
             page.go_to_url(cherryUrl)
             raw_json = webdriver.find_element(By.TAG_NAME, 'pre').text
             json_data = json.loads(raw_json)
@@ -32,14 +34,14 @@ def app_specific_action(webdriver, datasets):
             javascriptRequest1 = ('var xhr = new XMLHttpRequest();'
             'xhr.open("POST", "' + cherryUrl + '", false);'
             'xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");'
-            'xhr.send(JSON.stringify({"mode": "bbRevert", "msg": "revert", "author": "Fake Generator <fake.user@atlassian.com>", "targetBranch": "perf-branch-99", "newBranch": "", "pushAsNew": "false", "parentNumber": 1, "strategyOption": "default"}));'
+            'xhr.send(JSON.stringify({"mode": "bbRevert", "msg": "revert", "author": "Fake Generator <fake.user@atlassian.com>", "targetBranch": "' + branch_slug + '", "newBranch": "", "pushAsNew": "false", "parentNumber": 1, "strategyOption": "default"}));'
             # 'while(xhr.readyState !== 4){ await new Promise(r => setTimeout(r, 11)); }'
             'return xhr.responseText;')
 
             javascriptRequest2 = ('var xhr = new XMLHttpRequest();'
             'xhr.open("POST", "' + cherryUrl + '", false);'
             'xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");'
-            'xhr.send(JSON.stringify({"mode": "bbRevert", "msg": "revert-revert", "author": "Fake Generator <fake.user@atlassian.com>", "targetBranch": "perf-branch-99", "newBranch": "", "pushAsNew": "false", "parentNumber": 1, "strategyOption": "default"}));'
+            'xhr.send(JSON.stringify({"mode": "bbRevert", "msg": "revert-revert", "author": "Fake Generator <fake.user@atlassian.com>", "targetBranch": "' + branch_slug + '", "newBranch": "", "pushAsNew": "false", "parentNumber": 1, "strategyOption": "default"}));'
             # 'while(xhr.readyState !== 4){ await new Promise(r => setTimeout(r, 11)); }'
             'return xhr.responseText;')
 
@@ -62,7 +64,7 @@ def app_specific_action(webdriver, datasets):
                 raise Exception("Bit-Booster Revert-Revert Failed")
 
 
-            prUrl = f"{BITBUCKET_SETTINGS.server_url}/projects/{project_key}/repos/{repo_slug}/pull-requests?create&sourceBranch=perf-branch-99&targetBranch=master"
+            prUrl = f"{BITBUCKET_SETTINGS.server_url}/projects/{project_key}/repos/{repo_slug}/pull-requests?create&sourceBranch=" + branch_slug + "&targetBranch=master"
             page.go_to_url(prUrl)
             PopupManager(webdriver).dismiss_default_popup()
             page.wait_until_visible(page.get_selector(RepoLocators.pr_continue_button)).click()
