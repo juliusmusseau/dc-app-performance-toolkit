@@ -58,7 +58,7 @@ def app_specific_action(webdriver, datasets):
             #if json_data['rbSuccess'] is None or not bool(json_data['rbSuccess']):
             #    raise Exception("Bit-Booster Revert-Revert Failed")
 
-            prUrl = f"{BITBUCKET_SETTINGS.server_url}/projects/{project_key}/repos/{repo_slug}/pull-requests?create&sourceBranch=" + branch_slug + "&targetBranch=master"
+            prUrl = f"{BITBUCKET_SETTINGS.server_url}/projects/{project_key}/repos/{repo_slug}/pull-requests?create&sourceBranch=" + branch_slug + "&targetBranch=perf-branch-100"
             page.go_to_url(prUrl)
             PopupManager(webdriver).dismiss_default_popup()
             page.wait_until_visible(page.get_selector(RepoLocators.pr_continue_button)).click()
