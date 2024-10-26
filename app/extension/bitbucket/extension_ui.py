@@ -22,14 +22,14 @@ def app_specific_action(webdriver, datasets):
     def measure():
         @print_timing("selenium_app_custom_action:view_repo_page")
         def sub_measure():
-            cherryUrl = f"{BITBUCKET_SETTINGS.server_url}/plugins/servlet/bb_rb/projects/{project_key}/repos/{repo_slug}/commits/" + branch_slug + "~3"
+            cherryUrl = f"{BITBUCKET_SETTINGS.server_url}/plugins/servlet/bb_rb/projects/{project_key}/repos/{repo_slug}/commits/" + branch_slug + "~7"
             page.go_to_url(cherryUrl)
             raw_json = webdriver.find_element(By.TAG_NAME, 'pre').text
             json_data = json.loads(raw_json)
 
             # print(json_data)
-            if json_data['defaultCherryBranch'] is None or json_data['defaultCherryBranch'] == '':
-                raise Exception("No Default Cherry Branch")
+            if json_data['defaultRevertBranch'] is None or json_data['defaultRevertBranch'] == '':
+                raise Exception("No Default Revert Branch")
 
             javascriptRequest1 = ('var xhr = new XMLHttpRequest();'
             'xhr.open("POST", "' + cherryUrl + '", false);'
