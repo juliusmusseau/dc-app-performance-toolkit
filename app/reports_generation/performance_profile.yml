@@ -5,10 +5,16 @@ runs:
   # E.g. relativePath: "./app/results/jira/2024-01-01_10-10-10"
   - runName: "without app"
     runType: "baseline"
-    relativePath: "./app/results/bitbucket/bitbucket-1-node-baseline-2024-10-26"
+    relativePath: "./app/results/bitbucket/2024-12-20_16-57-23-baseline"
   - runName: "with app"
     runType: "experiment"
-    relativePath: "./app/results/bitbucket/bitbucket-1-node-installed-2024-10-26"
+    relativePath: "./app/results/bitbucket/2024-12-20_18-27-33-enabled"
+
+#2024-12-20_16-57-23-baseline
+#2024-12-20_18-27-33-enabled
+#2024-12-31_02-47-09-one-node
+#2024-12-31_04-00-23-two-node
+#2024-12-31_05-13-43-four-node
 
 # Chart generation config
 index_col: "Action"
