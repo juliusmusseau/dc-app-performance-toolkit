@@ -11,7 +11,7 @@ from util.conf import BITBUCKET_SETTINGS
 def app_specific_action(webdriver, datasets):
     page = BasePage(webdriver)
 
-    randomInt = 10000 + random.randint(1, 999)
+    randomInt = 10000 + random.randint(0, 25)
     project_key = "PRJ-" + str(randomInt)
     repo_slug = "prj-" + str(randomInt) + "-repo-1"
 
@@ -19,11 +19,13 @@ def app_specific_action(webdriver, datasets):
     def measure():
         @print_timing("selenium_app_custom_action:view_repo_page")
         def sub_measure():
-            bitBoosterTbl = (By.ID, 'bit-booster-tbl')
+            prNotifierMenu = (By.ID, 'prNotifierActualButton')
+            prNotifierButton = (By.CLASS_NAME, 'prnfb-button')
 
-            cherryUrl = f"{BITBUCKET_SETTINGS.server_url}/plugins/servlet/bb_ag/projects/{project_key}/repos/{repo_slug}/commits"
-            page.go_to_url(cherryUrl)
-            page.wait_until_visible(page.get_selector(bitBoosterTbl))
+            prUrl = f"{BITBUCKET_SETTINGS.server_url}/projects/{project_key}/repos/{repo_slug}/pull-requests/25/overview"
+            page.go_to_url(prUrl)
+            page.wait_until_visible(page.get_selector(prNotifierMenu)).click()
+            page.wait_until_visible(page.get_selector(prNotifierButton)).click()
 
         sub_measure()
     measure()
